@@ -1,5 +1,6 @@
 <template>
-    <section class="map"></section>
+    <section class="map">
+    </section>
 </template>
 
 <style scoped>
