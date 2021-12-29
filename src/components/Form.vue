@@ -31,7 +31,39 @@
     z-index:1;
     max-width: 610px;
     margin: 10px;
-
 }
-
 </style>
+
+<script>
+export default {
+  mounted() {
+    /* autocomplete search feature */
+
+    const originAutocomplete = new google.maps.places.Autocomplete(
+      this.$refs["origin"],
+      {
+        bounds: new google.maps.LatLngBounds(
+          new google.maps.LatLng(45,-75)
+        )
+      }
+    );
+
+    originAutocomplete.addListener("place_changed", () => {
+      console.log(originAutocomplete.getPlace());
+    });
+
+    const destinationAutocomplete = new google.maps.places.Autocomplete(
+      this.$refs["destination"],
+      {
+        bounds: new google.maps.LatLngBounds(
+          new google.maps.LatLng(45,-75)
+        )
+      }
+    );
+
+    destinationAutocomplete.addListener("place_changed", () => {
+      console.log(destinationAutocomplete.getPlace());
+    });
+  }
+};
+</script>
