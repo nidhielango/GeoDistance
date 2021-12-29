@@ -1,4 +1,4 @@
-# food-delivery-app
+# GeoDistance
 
 > A Vue.js project
 
