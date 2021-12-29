@@ -14,5 +14,4 @@
     export default {
         components: { Form, RouteList, Map }
     };
-
 </script>
