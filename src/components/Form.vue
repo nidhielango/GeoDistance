@@ -35,7 +35,32 @@
 </style>
 
 <script>
+
+import axios from 'axios';
+
 export default {
+
+  data() {
+    return {
+      route: {
+        origin: {
+          address: "",
+          lat: 0,
+          lng: 0,
+        },
+        destination: {
+          address: "",
+          lat: 0,
+          lng: 0,
+        },
+        distance: {},
+        duration: {},
+      },
+      error: "",
+      spinner: false,
+    };
+  },
+
   mounted() {
     /* autocomplete search feature */
 
@@ -50,9 +75,23 @@ export default {
       );
 
       autocomplete.addListener("place_changed", () => {
-        console.log(autocomplete.getPlace());
+        const place = autocomplete.getPlace();
+        this.route[ref].address = `${place.name}, ${place.vicinity}`;
+        this.route[ref].lat = place.geometry.location.lat();
+        this.route[ref].lng = place.geometry.location.lng();
       });
     }
+  },
+  methods:{
+    calculateButtonPressed() {
+      const URL = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${this.route.origin.lat}, ${this.route.origin.lng}&destinations=${this.route.destination.lat},${this.route.destination.lng}&key={apiKey}`;
+      axios.get(URL).then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+    }  
   }  
 };
 </script>
