@@ -39,31 +39,20 @@ export default {
   mounted() {
     /* autocomplete search feature */
 
-    const originAutocomplete = new google.maps.places.Autocomplete(
-      this.$refs["origin"],
-      {
-        bounds: new google.maps.LatLngBounds(
-          new google.maps.LatLng(45,-75)
-        )
-      }
-    );
+    for (let ref in this.$refs) {
+      const autocomplete = new google.maps.places.Autocomplete(
+        this.$refs[ref],
+        {
+          bounds: new google.maps.LatLngBounds(
+            new google.maps.LatLng(43.589046, -79.644119)
+          ),
+        }
+      );
 
-    originAutocomplete.addListener("place_changed", () => {
-      console.log(originAutocomplete.getPlace());
-    });
-
-    const destinationAutocomplete = new google.maps.places.Autocomplete(
-      this.$refs["destination"],
-      {
-        bounds: new google.maps.LatLngBounds(
-          new google.maps.LatLng(45,-75)
-        )
-      }
-    );
-
-    destinationAutocomplete.addListener("place_changed", () => {
-      console.log(destinationAutocomplete.getPlace());
-    });
-  }
+      autocomplete.addListener("place_changed", () => {
+        console.log(autocomplete.getPlace());
+      });
+    }
+  }  
 };
 </script>
