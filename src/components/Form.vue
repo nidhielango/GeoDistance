@@ -84,12 +84,32 @@ export default {
   },
   methods:{
     calculateButtonPressed() {
-      const URL = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${this.route.origin.lat}, ${this.route.origin.lng}&destinations=${this.route.destination.lat},${this.route.destination.lng}&key={apiKey}`;
+
+      this.spinner = true;
+
+      const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/distancematrix/json?origins=${this.route.origin.lat}, ${this.route.origin.lng}&destinations=${this.route.destination.lat},${this.route.destination.lng}&key={apiKey}`;
       axios.get(URL).then(response => {
-        console.log(response);
+        if(response.data.error_message) {
+          this.error = response.data.error_message;
+        } else {
+          const elements = response.data.rows[0].elements;
+          
+          if (elements[0].status === "ZERO_RESULTS") {
+              this.error = "No Results Found.";
+            } else {
+              this.route.distance = elements[0].distance;
+              this.route.duration = elements[0].duration;
+                          
+            }
+            this.spinner = false;
+
+          console.log(response);
+        }
       })
       .catch(error => {
         console.log(error.message);
+        this.error = error.message;
+        this.spinner = false;
       });
     }  
   }  
