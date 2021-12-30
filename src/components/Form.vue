@@ -34,12 +34,11 @@
 }
 </style>
 
+
 <script>
-
-import axios from 'axios';
-
+import axios from "axios";
+import firebase from "firebase";
 export default {
-
   data() {
     return {
       route: {
@@ -62,14 +61,15 @@ export default {
   },
 
   mounted() {
-    /* autocomplete search feature */
+
+    // autocomplete search feature
 
     for (let ref in this.$refs) {
       const autocomplete = new google.maps.places.Autocomplete(
         this.$refs[ref],
         {
           bounds: new google.maps.LatLngBounds(
-            new google.maps.LatLng(43.589046, -79.644119)
+            new google.maps.LatLng(43, -60)
           ),
         }
       );
@@ -82,36 +82,50 @@ export default {
       });
     }
   },
-  methods:{
+  methods: {
     calculateButtonPressed() {
-
       this.spinner = true;
 
-      const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/distancematrix/json?origins=${this.route.origin.lat}, ${this.route.origin.lng}&destinations=${this.route.destination.lat},${this.route.destination.lng}&key={apiKey}`;
-      axios.get(URL).then(response => {
-        if(response.data.error_message) {
-          this.error = response.data.error_message;
-        } else {
-          const elements = response.data.rows[0].elements;
-          
-          if (elements[0].status === "ZERO_RESULTS") {
+      const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/distancematrix/json?origins=${this.route.origin.lat},${this.route.origin.lng}&destinations=${this.route.destination.lat},${this.route.destination.lng}&key=[apiKey]`;
+
+      axios
+        .get(URL)
+        .then((response) => {
+          if (response.data.error_message) {
+            this.error = response.data.error_message;
+          } else {
+            const elements = response.data.rows[0].elements;
+
+            if (elements[0].status === "ZERO_RESULTS") {
               this.error = "No Results Found.";
             } else {
               this.route.distance = elements[0].distance;
               this.route.duration = elements[0].duration;
-                          
+              this.route.color = this.getRandomColor();
+
+              this.saveRoute();
             }
             this.spinner = false;
-
-          console.log(response);
-        }
-      })
-      .catch(error => {
-        console.log(error.message);
-        this.error = error.message;
-        this.spinner = false;
-      });
-    }  
-  }  
+          }
+        })
+        .catch((error) => {
+          console.log(error.message);
+          this.error = error.message;
+          this.spinner = false;
+        });
+    },
+    saveRoute() {
+      const db = firebase.firestore();
+      db.collection("routes").doc().set(this.route);
+    },
+    getRandomColor() {
+      let characters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += characters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
+  },
 };
 </script>
